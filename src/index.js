@@ -250,6 +250,45 @@ class Dropzone extends React.Component {
   setRefs(ref) {
     this.fileInputEl = ref
   }
+
+  getInputProps = ({ refKey = 'ref', ...rest } = {}) => {
+    const { accept, disabled, multiple, name } = this.props
+    const inputProps = {
+      accept,
+      disabled,
+      type: 'file',
+      style: { display: 'none' },
+      multiple: supportMultiple && multiple,
+      onChange: this.onDrop,
+      autoComplete: 'off',
+      [refKey]: this.setRefs
+    }
+
+    if (name && name.length) {
+      inputProps.name = name
+    }
+
+    return {
+      ...inputProps,
+      ...rest
+    }
+  }
+
+  getRootProps = ({ refKey = 'ref', ...rest } = {}) => {
+    const { disabled } = this.props
+    return {
+      onClick: this.composeHandlers(this.onClick),
+      onDragStart: this.composeHandlers(this.onDragStart),
+      onDragEnter: this.composeHandlers(this.onDragEnter),
+      onDragOver: this.composeHandlers(this.onDragOver),
+      onDragLeave: this.composeHandlers(this.onDragLeave),
+      onDrop: this.composeHandlers(this.onDrop),
+      'aria-disabled': disabled,
+      [refKey]: this.setRef,
+      ...rest
+    }
+  }
+
   /**
    * Open system file upload dialog.
    *
@@ -262,7 +301,7 @@ class Dropzone extends React.Component {
   }
 
   render() {
-    const { accept, children, disabled, multiple, name } = this.props
+    const { children, multiple } = this.props
 
     const { isDragActive, draggedFiles, acceptedFiles, rejectedFiles } = this.state
     const filesCount = draggedFiles.length
@@ -270,35 +309,9 @@ class Dropzone extends React.Component {
     const isDragAccept = filesCount > 0 && allFilesAccepted(draggedFiles, this.props.accept)
     const isDragReject = filesCount > 0 && (!isDragAccept || !isMultipleAllowed)
 
-    const inputProps = {
-      accept,
-      disabled,
-      type: 'file',
-      style: { display: 'none' },
-      multiple: supportMultiple && multiple,
-      ref: this.setRefs,
-      onChange: this.onDrop,
-      autoComplete: 'off'
-    }
-
-    if (name && name.length) {
-      inputProps.name = name
-    }
-
-    const rootProps = {
-      onClick: this.composeHandlers(this.onClick),
-      onDragStart: this.composeHandlers(this.onDragStart),
-      onDragEnter: this.composeHandlers(this.onDragEnter),
-      onDragOver: this.composeHandlers(this.onDragOver),
-      onDragLeave: this.composeHandlers(this.onDragLeave),
-      onDrop: this.composeHandlers(this.onDrop),
-      ref: this.setRef,
-      'aria-disabled': disabled
-    }
-
     return children({
-      rootProps,
-      inputProps,
+      getRootProps: this.getRootProps,
+      getInputProps: this.getInputProps,
       isDragActive,
       isDragAccept,
       isDragReject,

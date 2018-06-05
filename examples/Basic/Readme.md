@@ -18,11 +18,14 @@ class Basic extends React.Component {
       <section>
         <div className="dropzone">
           <Dropzone onDrop={this.onDrop.bind(this)}>
-            {({ rootProps, inputProps, isDragActive, isDragAccept, isDragReject }) => (
-              <div {...rootProps}>
-                <input {...inputProps} />
+            {({ getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject }) => (
+              <DropzoneBox
+                {...{ isDragActive, isDragAccept, isDragReject }}
+                {...getRootProps({ refKey: 'innerRef' })}
+              >
+                <input {...getInputProps()} />
                 <p>Try dropping some files here, or click to select files to upload.</p>
-              </div>
+              </DropzoneBox>
             )}
           </Dropzone>
         </div>
@@ -65,11 +68,14 @@ class Basic extends React.Component {
         </aside>
         <div className="dropzone">
           <Dropzone onDrop={this.onDrop.bind(this)} disabled={this.state.disabled}>
-            {({ rootProps, inputProps, isDragActive, isDragAccept, isDragReject }) => (
-              <div {...rootProps}>
-                <input {...inputProps} />
+            {({ getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject }) => (
+              <DropzoneBox
+                {...{ isDragActive, isDragAccept, isDragReject }}
+                {...getRootProps({ refKey: 'innerRef' })}
+              >
+                <input {...getInputProps()} />
                 <p>Try dropping some files here, or click to select files to upload.</p>
-              </div>
+              </DropzoneBox>
             )}
           </Dropzone>
         </div>

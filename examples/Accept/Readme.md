@@ -27,12 +27,15 @@ class Accept extends React.Component {
             accept="image/jpeg, image/png"
             onDrop={(accepted, rejected) => { this.setState({ accepted, rejected }); }}
           >
-            {({ rootProps, inputProps, isDragActive, isDragAccept, isDragReject }) => (
-              <div {...rootProps}>
-                <input {...inputProps} />
+            {({ getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject }) => (
+              <DropzoneBox
+                {...{ isDragActive, isDragAccept, isDragReject }}
+                {...getRootProps({ refKey: 'innerRef' })}
+              >
+                <input {...getInputProps()} />
                 <p>Try dropping some files here, or click to select files to upload.</p>
                 <p>Only *.jpeg and *.png images will be accepted</p>
-              </div>
+              </DropzoneBox>
             )}
           </Dropzone>
         </div>
@@ -68,13 +71,16 @@ Also, at this moment it's not possible to read file names (and thus, file extens
 <Dropzone
   accept=".jpeg,.png"
 >
-  {({ rootProps, inputProps, isDragActive, isDragAccept, isDragReject }) => (
-    <div {...rootProps}>
-      <input {...inputProps} />
+  {({ getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject }) => (
+    <DropzoneBox
+      {...{ isDragActive, isDragAccept, isDragReject }}
+      {...getRootProps({ refKey: 'innerRef' })}
+    >
+      <input {...getInputProps()} />
       {isDragAccept && "All files will be accepted"}
       {isDragReject && "Some files will be rejected"}
       {!isDragActive && "Dropping some files here..."}
-    </div>
+    </DropzoneBox>
   )}
 </Dropzone>
 ```
@@ -85,13 +91,16 @@ but this one will:
 <Dropzone
   accept="image/jpeg, image/png"
 >
-  {({ rootProps, inputProps, isDragActive, isDragAccept, isDragReject }) => (
-    <div {...rootProps}>
-      <input {...inputProps} />
+  {({ getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject }) => (
+    <DropzoneBox
+      {...{ isDragActive, isDragAccept, isDragReject }}
+      {...getRootProps({ refKey: 'innerRef' })}
+    >
+      <input {...getInputProps()} />
       {isDragAccept && "All files will be accepted"}
       {isDragReject && "Some files will be rejected"}
       {!isDragActive && "Dropping some files here..."}
-    </div>
+    </DropzoneBox>
   )}
 </Dropzone>
 ```

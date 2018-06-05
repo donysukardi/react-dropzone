@@ -7,6 +7,10 @@ module.exports = {
   showUsage: true,
   showSidebar: false,
   serverPort: 8080,
+  context: {
+    Dropzone: path.join(__dirname, './src/index'),
+    DropzoneBox: path.join(__dirname, './examples/DropzoneBox')
+  },
   sections: [
     {
       content: 'README.md'
@@ -17,9 +21,6 @@ module.exports = {
     },
     {
       name: 'Examples',
-      context: {
-        Dropzone: './src/index'
-      },
       sections: [
         {
           name: 'Basic example',

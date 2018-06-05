@@ -58,9 +58,9 @@ class FullScreen extends React.Component {
         onDragEnter={this.onDragEnter.bind(this)}
         onDragLeave={this.onDragLeave.bind(this)}
       >
-        {({ rootProps, inputProps, isDragActive, isDragAccept, isDragReject }) => (
-          <div {...rootProps}>
-            <input {...inputProps} />
+        {({ getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject }) => (
+          <div {...getRootProps()}>
+            <input {...getInputProps()} />
             { dropzoneActive && <div style={overlayStyle}>Drop files...</div> }
             <div>
               <h1>My awesome app</h1>

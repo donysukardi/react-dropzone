@@ -5,9 +5,9 @@ let dropzoneRef;
 
 <div>
   <Dropzone ref={(node) => { dropzoneRef = node; }} onDrop={(accepted, rejected) => { alert(accepted) }}>
-    {({ rootProps, inputProps, isDragActive, isDragAccept, isDragReject }) => (
-      <div {...rootProps}>
-         <input {...inputProps} />
+    {({ getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject }) => (
+      <div {...getRootProps()}>
+         <input {...getInputProps()} />
          <p>Drop files here.</p>
       </div>
     )}
