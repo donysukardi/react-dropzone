@@ -8,16 +8,15 @@ By providing a function that returns the component's children you can not only s
 <Dropzone
   accept="image/png"
 >
-  {({ isDragActive, isDragReject, acceptedFiles, rejectedFiles }) => {
-    if (isDragActive) {
-      return "This file is authorized";
-    }
-    if (isDragReject) {
-      return "This file is not authorized";
-    }
-    return acceptedFiles.length || rejectedFiles.length
+  {({ rootProps, inputProps, isDragActive, isDragAccept, isDragReject, acceptedFiles, rejectedFiles }) => (
+    <div {...rootProps}>
+      <input {...inputProps} />
+      {isDragAccept && "This file is authorized"}
+      {isDragReject && "This file is not authorized"}
+      {!isDragActive && ((acceptedFiles.length || rejectedFiles.length)
       ? `Accepted ${acceptedFiles.length}, rejected ${rejectedFiles.length} files`
-      : "Try dropping some files.";
-  }}
+      : "Try dropping some files.")}
+    </div>
+  )}
 </Dropzone>
 ```

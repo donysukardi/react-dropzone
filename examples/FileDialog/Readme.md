@@ -5,7 +5,12 @@ let dropzoneRef;
 
 <div>
   <Dropzone ref={(node) => { dropzoneRef = node; }} onDrop={(accepted, rejected) => { alert(accepted) }}>
-      <p>Drop files here.</p>
+    {({ rootProps, inputProps, isDragActive, isDragAccept, isDragReject }) => (
+      <div {...rootProps}>
+         <input {...inputProps} />
+         <p>Drop files here.</p>
+      </div>
+    )}
   </Dropzone>
   <button type="button" onClick={() => { dropzoneRef.open() }}>
       Open File Dialog

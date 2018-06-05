@@ -58,24 +58,28 @@ class FullScreen extends React.Component {
         onDragEnter={this.onDragEnter.bind(this)}
         onDragLeave={this.onDragLeave.bind(this)}
       >
-        { dropzoneActive && <div style={overlayStyle}>Drop files...</div> }
-        <div>
-          <h1>My awesome app</h1>
-          <label htmlFor="mimetypes">Enter mime types you want to accept: </label>
-          <input
-            type="text"
-            id="mimetypes"
-            onChange={this.applyMimeTypes.bind(this)}
-          />
+        {({ rootProps, inputProps, isDragActive, isDragAccept, isDragReject }) => (
+          <div {...rootProps}>
+            <input {...inputProps} />
+            { dropzoneActive && <div style={overlayStyle}>Drop files...</div> }
+            <div>
+              <h1>My awesome app</h1>
+              <label htmlFor="mimetypes">Enter mime types you want to accept: </label>
+              <input
+                type="text"
+                id="mimetypes"
+                onChange={this.applyMimeTypes.bind(this)}
+              />
 
-          <h2>Dropped files</h2>
-          <ul>
-            {
-              files.map(f => <li>{f.name} - {f.size} bytes</li>)
-            }
-          </ul>
-
-        </div>
+              <h2>Dropped files</h2>
+              <ul>
+                {
+                  files.map(f => <li>{f.name} - {f.size} bytes</li>)
+                }
+              </ul>
+            </div>
+          </div>
+        )}
       </Dropzone>
     );
   }

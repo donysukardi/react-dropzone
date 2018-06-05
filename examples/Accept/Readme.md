@@ -27,8 +27,13 @@ class Accept extends React.Component {
             accept="image/jpeg, image/png"
             onDrop={(accepted, rejected) => { this.setState({ accepted, rejected }); }}
           >
-            <p>Try dropping some files here, or click to select files to upload.</p>
-            <p>Only *.jpeg and *.png images will be accepted</p>
+            {({ rootProps, inputProps, isDragActive, isDragAccept, isDragReject }) => (
+              <div {...rootProps}>
+                <input {...inputProps} />
+                <p>Try dropping some files here, or click to select files to upload.</p>
+                <p>Only *.jpeg and *.png images will be accepted</p>
+              </div>
+            )}
           </Dropzone>
         </div>
         <aside>
@@ -63,15 +68,14 @@ Also, at this moment it's not possible to read file names (and thus, file extens
 <Dropzone
   accept=".jpeg,.png"
 >
-  {({ isDragActive, isDragReject }) => {
-    if (isDragActive) {
-      return "All files will be accepted";
-    }
-    if (isDragReject) {
-      return "Some files will be rejected";
-    }
-    return "Dropping some files here...";
-  }}
+  {({ rootProps, inputProps, isDragActive, isDragAccept, isDragReject }) => (
+    <div {...rootProps}>
+      <input {...inputProps} />
+      {isDragAccept && "All files will be accepted"}
+      {isDragReject && "Some files will be rejected"}
+      {!isDragActive && "Dropping some files here..."}
+    </div>
+  )}
 </Dropzone>
 ```
 
@@ -81,15 +85,14 @@ but this one will:
 <Dropzone
   accept="image/jpeg, image/png"
 >
-  {({ isDragActive, isDragReject }) => {
-    if (isDragActive) {
-      return "All files will be accepted";
-    }
-    if (isDragReject) {
-      return "Some files will be rejected";
-    }
-    return "Dropping some files here...";
-  }}
+  {({ rootProps, inputProps, isDragActive, isDragAccept, isDragReject }) => (
+    <div {...rootProps}>
+      <input {...inputProps} />
+      {isDragAccept && "All files will be accepted"}
+      {isDragReject && "Some files will be rejected"}
+      {!isDragActive && "Dropping some files here..."}
+    </div>
+  )}
 </Dropzone>
 ```
 

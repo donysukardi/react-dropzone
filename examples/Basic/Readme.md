@@ -18,7 +18,12 @@ class Basic extends React.Component {
       <section>
         <div className="dropzone">
           <Dropzone onDrop={this.onDrop.bind(this)}>
-            <p>Try dropping some files here, or click to select files to upload.</p>
+            {({ rootProps, inputProps, isDragActive, isDragAccept, isDragReject }) => (
+              <div {...rootProps}>
+                <input {...inputProps} />
+                <p>Try dropping some files here, or click to select files to upload.</p>
+              </div>
+            )}
           </Dropzone>
         </div>
         <aside>
@@ -60,7 +65,12 @@ class Basic extends React.Component {
         </aside>
         <div className="dropzone">
           <Dropzone onDrop={this.onDrop.bind(this)} disabled={this.state.disabled}>
-            <p>Try dropping some files here, or click to select files to upload.</p>
+            {({ rootProps, inputProps, isDragActive, isDragAccept, isDragReject }) => (
+              <div {...rootProps}>
+                <input {...inputProps} />
+                <p>Try dropping some files here, or click to select files to upload.</p>
+              </div>
+            )}
           </Dropzone>
         </div>
         <aside>

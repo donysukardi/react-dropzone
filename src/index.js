@@ -11,7 +11,6 @@ import {
   getDataTransferItems,
   isIeOrEdge
 } from './utils'
-import styles from './utils/styles'
 
 class Dropzone extends React.Component {
   constructor(props, context) {
@@ -25,7 +24,6 @@ class Dropzone extends React.Component {
     this.onDragStart = this.onDragStart.bind(this)
     this.onDrop = this.onDrop.bind(this)
     this.onFileDialogCancel = this.onFileDialogCancel.bind(this)
-    this.onInputElementClick = this.onInputElementClick.bind(this)
 
     this.setRef = this.setRef.bind(this)
     this.setRefs = this.setRefs.bind(this)
@@ -47,7 +45,6 @@ class Dropzone extends React.Component {
       document.addEventListener('dragover', onDocumentDragOver, false)
       document.addEventListener('drop', this.onDocumentDrop, false)
     }
-    this.fileInputEl.addEventListener('click', this.onInputElementClick, false)
     window.addEventListener('focus', this.onFileDialogCancel, false)
   }
 
@@ -56,9 +53,6 @@ class Dropzone extends React.Component {
     if (preventDropOnDocument) {
       document.removeEventListener('dragover', onDocumentDragOver)
       document.removeEventListener('drop', this.onDocumentDrop)
-    }
-    if (this.fileInputEl != null) {
-      this.fileInputEl.removeEventListener('click', this.onInputElementClick, false)
     }
     window.removeEventListener('focus', this.onFileDialogCancel, false)
   }
@@ -227,13 +221,6 @@ class Dropzone extends React.Component {
     }
   }
 
-  onInputElementClick(evt) {
-    evt.stopPropagation()
-    if (this.props.inputProps && this.props.inputProps.onClick) {
-      this.props.inputProps.onClick()
-    }
-  }
-
   onFileDialogCancel() {
     // timeout will not recognize context of this method
     const { onFileDialogCancel } = this.props
@@ -274,99 +261,16 @@ class Dropzone extends React.Component {
     this.fileInputEl.click()
   }
 
-  renderChildren = (children, isDragActive, isDragAccept, isDragReject) => {
-    if (typeof children === 'function') {
-      return children({
-        ...this.state,
-        isDragActive,
-        isDragAccept,
-        isDragReject
-      })
-    }
-    return children
-  }
-
   render() {
-    const {
-      accept,
-      acceptClassName,
-      activeClassName,
-      children,
-      disabled,
-      disabledClassName,
-      inputProps,
-      multiple,
-      name,
-      rejectClassName,
-      ...rest
-    } = this.props
+    const { accept, children, disabled, multiple, name } = this.props
 
-    let {
-      acceptStyle,
-      activeStyle,
-      className = '',
-      disabledStyle,
-      rejectStyle,
-      style,
-      ...props // eslint-disable-line prefer-const
-    } = rest
-
-    const { isDragActive, draggedFiles } = this.state
+    const { isDragActive, draggedFiles, acceptedFiles, rejectedFiles } = this.state
     const filesCount = draggedFiles.length
     const isMultipleAllowed = multiple || filesCount <= 1
     const isDragAccept = filesCount > 0 && allFilesAccepted(draggedFiles, this.props.accept)
     const isDragReject = filesCount > 0 && (!isDragAccept || !isMultipleAllowed)
-    const noStyles =
-      !className && !style && !activeStyle && !acceptStyle && !rejectStyle && !disabledStyle
 
-    if (isDragActive && activeClassName) {
-      className += ' ' + activeClassName
-    }
-    if (isDragAccept && acceptClassName) {
-      className += ' ' + acceptClassName
-    }
-    if (isDragReject && rejectClassName) {
-      className += ' ' + rejectClassName
-    }
-    if (disabled && disabledClassName) {
-      className += ' ' + disabledClassName
-    }
-
-    if (noStyles) {
-      style = styles.default
-      activeStyle = styles.active
-      acceptStyle = style.active
-      rejectStyle = styles.rejected
-      disabledStyle = styles.disabled
-    }
-
-    let appliedStyle = { ...style }
-    if (activeStyle && isDragActive) {
-      appliedStyle = {
-        ...style,
-        ...activeStyle
-      }
-    }
-    if (acceptStyle && isDragAccept) {
-      appliedStyle = {
-        ...appliedStyle,
-        ...acceptStyle
-      }
-    }
-    if (rejectStyle && isDragReject) {
-      appliedStyle = {
-        ...appliedStyle,
-        ...rejectStyle
-      }
-    }
-    if (disabledStyle && disabled) {
-      appliedStyle = {
-        ...style,
-        ...disabledStyle
-      }
-    }
-
-    const inputAttributes = {
+    const inputProps = {
       accept,
       disabled,
       type: 'file',
@@ -378,44 +282,30 @@ class Dropzone extends React.Component {
     }
 
     if (name && name.length) {
-      inputAttributes.name = name
+      inputProps.name = name
     }
 
-    // Destructure custom props away from props used for the div element
-    const {
-      acceptedFiles,
-      preventDropOnDocument,
-      disablePreview,
-      disableClick,
-      onDropAccepted,
-      onDropRejected,
-      onFileDialogCancel,
-      maxSize,
-      minSize,
-      ...divProps
-    } = props
+    const rootProps = {
+      onClick: this.composeHandlers(this.onClick),
+      onDragStart: this.composeHandlers(this.onDragStart),
+      onDragEnter: this.composeHandlers(this.onDragEnter),
+      onDragOver: this.composeHandlers(this.onDragOver),
+      onDragLeave: this.composeHandlers(this.onDragLeave),
+      onDrop: this.composeHandlers(this.onDrop),
+      ref: this.setRef,
+      'aria-disabled': disabled
+    }
 
-    return (
-      <div
-        className={className}
-        style={appliedStyle}
-        {...divProps /* expand user provided props first so event handlers are never overridden */}
-        onClick={this.composeHandlers(this.onClick)}
-        onDragStart={this.composeHandlers(this.onDragStart)}
-        onDragEnter={this.composeHandlers(this.onDragEnter)}
-        onDragOver={this.composeHandlers(this.onDragOver)}
-        onDragLeave={this.composeHandlers(this.onDragLeave)}
-        onDrop={this.composeHandlers(this.onDrop)}
-        ref={this.setRef}
-        aria-disabled={disabled}
-      >
-        {this.renderChildren(children, isDragActive, isDragAccept, isDragReject)}
-        <input
-          {...inputProps /* expand user provided inputProps first so inputAttributes override them */}
-          {...inputAttributes}
-        />
-      </div>
-    )
+    return children({
+      rootProps,
+      inputProps,
+      isDragActive,
+      isDragAccept,
+      isDragReject,
+      draggedFiles,
+      acceptedFiles,
+      rejectedFiles
+    })
   }
 }
 
@@ -457,11 +347,6 @@ Dropzone.propTypes = {
   preventDropOnDocument: PropTypes.bool,
 
   /**
-   * Pass additional attributes to the `<input type="file"/>` tag
-   */
-  inputProps: PropTypes.object,
-
-  /**
    * Allow dropping multiple files
    */
   multiple: PropTypes.bool,
@@ -480,56 +365,6 @@ Dropzone.propTypes = {
    * Minimum file size (in bytes)
    */
   minSize: PropTypes.number,
-
-  /**
-   * className
-   */
-  className: PropTypes.string,
-
-  /**
-   * className to apply when drag is active
-   */
-  activeClassName: PropTypes.string,
-
-  /**
-   * className to apply when drop will be accepted
-   */
-  acceptClassName: PropTypes.string,
-
-  /**
-   * className to apply when drop will be rejected
-   */
-  rejectClassName: PropTypes.string,
-
-  /**
-   * className to apply when dropzone is disabled
-   */
-  disabledClassName: PropTypes.string,
-
-  /**
-   * CSS styles to apply
-   */
-  style: PropTypes.object,
-
-  /**
-   * CSS styles to apply when drag is active
-   */
-  activeStyle: PropTypes.object,
-
-  /**
-   * CSS styles to apply when drop will be accepted
-   */
-  acceptStyle: PropTypes.object,
-
-  /**
-   * CSS styles to apply when drop will be rejected
-   */
-  rejectStyle: PropTypes.object,
-
-  /**
-   * CSS styles to apply when dropzone is disabled
-   */
-  disabledStyle: PropTypes.object,
 
   /**
    * onClick callback
